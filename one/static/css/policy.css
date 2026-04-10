@@ -1,7 +1,7 @@
 .container{
     background-color: black;
 }
-p{
+.title{
     color: white;
     padding-left: 30px;
     font-size: 26px;
@@ -15,12 +15,35 @@ p{
     flex-direction: row;
     font-size:18px;
     margin-bottom: 0;
-    padding-left: 30px;
+    padding-left: 10px;
+    margin-top: 30px;
 }
 .term_title_list {
-background-color:black;
+    background-color:black;
     color: gray;
+    border: none;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.3s ease;
 }
 .term_title_list:hover{
     color : white;
+    border-color: white;
+    border-bottom: 2px solid white;
+}
+.btn-chk {
+    background-color:black;
+    color : white;
+    border-color: white;
+    border: none;
+    border-bottom: 2px solid white;
+}
+button{
+    margin: 0 20px;
+}
+p{
+    margin-top: 50px;
+    font-size: 15px;
+    padding-left: 30px;
+    padding-right: 10px;
+    color: gray;
 }
