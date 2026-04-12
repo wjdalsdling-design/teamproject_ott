@@ -21,7 +21,7 @@
                     aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <a class="navbar-brand text-white" href="#"><img class = "logo" src="../static/img/test_logo.png" alt=""></a>
+                <a class="navbar-brand text-white" href="{{ url_for('home.index')}}"><img class = "logo" src="{{ url_for('static', filename='img/test_logo.png') }}" alt=""></a>
                 <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
@@ -57,10 +57,10 @@
             <div class="container-fluid footer_top">
                 <ul class="list">
                     <li class="footer_nav">고객센터</li>
-                    <li class="footer_nav">이용약관</li>
-                    <li class="footer_nav">개인정보처리방침</li>
-                    <li class="footer_nav">청소년보호정책</li>
-                    <li class="footer_nav">법적고지</li>
+                    <li class="footer_nav"><a href="{{ url_for('policy.terms') }}">이용약관</a></li>
+                    <li class="footer_nav"><a href="{{ url_for('policy.pay_terms') }}">유료이용약관</a></li>
+                    <li class="footer_nav"><a href="{{ url_for('policy.youth') }}">청소년보호정책</a></li>
+                    <li class="footer_nav"><a href="{{ url_for('policy.legal') }}">법적고지</a></li>
                 </ul>
             </div>
             <div class="container-fluid footer_middle">

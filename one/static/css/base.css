@@ -14,7 +14,7 @@ html {
 #wrap {
     flex: 1;
     /* 네비바(약 56px)와 푸터(350px) 높이를 뺀 나머지를 최소 높이로 설정 */
-    min-height: calc(100vh - 250px); 
+    min-height: calc(100vh - 200px);
 }
 header {
     width: 100%;
@@ -103,8 +103,8 @@ footer{
 }
 a {
     text-decoration: none;
-    color: white;
+    color: gray;
 }
 .term_title_list{
-    border: noen;
+    border: none;
 }

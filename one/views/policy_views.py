@@ -18,10 +18,6 @@ def email():
 def legal():
     return render_template('policy/legal.html')
 
-@bp.route('/privacy')
-def privacy():
-    return render_template('policy/privacy.html')
-
 @bp.route('/youth')
 def youth():
     return render_template('policy/youth.html')
