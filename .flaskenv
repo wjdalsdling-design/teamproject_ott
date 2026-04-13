@@ -1,2 +1,3 @@
 FLASK_APP=one
 FLASK_ENV=development
+FLASK_DEBUG=TRUE

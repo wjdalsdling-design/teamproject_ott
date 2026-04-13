@@ -2,11 +2,11 @@ from flask import Blueprint, redirect, url_for, render_template
 
 bp = Blueprint('policy', __name__, url_prefix='/policy/')
 
-@bp.route('/terms')
+@bp.route('/term')
 def terms():
     return render_template('policy/term.html')
 
-@bp.route('/pay-terms')
+@bp.route('/pay-term')
 def pay_terms():
     return render_template('policy/pay-term.html')
 
@@ -17,10 +17,6 @@ def email():
 @bp.route('/legal')
 def legal():
     return render_template('policy/legal.html')
-
-@bp.route('/privacy')
-def privacy():
-    return render_template('policy/privacy.html')
 
 @bp.route('/youth')
 def youth():

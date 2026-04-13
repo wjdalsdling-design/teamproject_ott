@@ -1,10 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}
+    이용약관
+{% endblock %}
 
-</body>
-</html>
+
+
+{% block styles %}
+ <link rel="stylesheet" href="{{ url_for('static', filename='css/policy.css') }}">
+ <link rel="stylesheet" href="{{ url_for('static', filename='css/term.css') }}">
+
+{% endblock %}
+
+
+{% block content %}
+<div class="container-fluid">
+    <p class="title">약관 및 정책</p>
+    <div class="list_container">
+         <button type="button" class="term_title_list" onclick="location.href='./term'">4FLEX 이용약관</button>
+         <button type="button" class="term_title_list" onclick="location.href='./pay-term'">유료이용약관</button>
+         <button type="button" class="term_title_list" onclick="location.href='./email'">E-mail 무단수집거부</button>
+         <button type="button" class="term_title_list" onclick="location.href='#'">법적고지</button>
+         <button type="button" class="term_title_list" onclick="location.href='./youth'">청소년 보호정책</button>
+    </div>
+    <div id= "term_1" class="content"></div>
+{% endblock %}
+{% block script %}
+<script>
+    const btn = document.querySelectorAll('.term_title_list')[3];
+if(btn){
+    btn.classList.replace('term_title_list', 'btn-chk')
+}
+
+
+document.addEventListener("DOMContentLoaded", async function () {
+    try {
+        const response = await fetch("../static/text/legal.txt");
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        const data = await response.text();
+        document.getElementById("term_1").innerHTML = data;
+    } catch (error) {
+        console.error("There was a problem with the fetch operation:", error);
+    }
+});
+</script>
+{% endblock %}
