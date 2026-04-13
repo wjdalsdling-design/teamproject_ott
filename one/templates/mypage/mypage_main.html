@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}
+    마이페이지
+{% endblock %}
+
+{% block styles %}
+ <link rel="stylesheet" href="{{ url_for('static', filename='css/mypage.css') }}">
+{% endblock %}
+
+
+
+{% block content %}
+<div class="container-fluid d-flex justify-content-between">
+    <div>
+             {{user_data.user_id}}
+    </div>
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="button" class="btn btn-primary">회원정보 수정 </button>
+        <button type="button" class="btn btn-primary">고객센터</button>
+        <button type="button" class="btn btn-primary">구독권구매</button>
+    </div>
+</div>
+
+<div class="container-fluid mypage_ad">
+ <p>이용권을 구독하고 img img 등 인기TV프로그램과 다양한 영화를 자유롭게 시청하세요</p>
+</div>
+
+
+ <div class="container-fluid">
+      <div class="mypage_list">
+         <button type="button" class="mypage_btn" onclick="location.href='#'">시청내역</button>
+         <button type="button" class="mypage_btn" onclick="location.href='#'">구매내역</button>
+         <button type="button" class="mypage_btn" onclick="location.href='#'">찜</button>
+         <button type="button" class="mypage_btn" onclick="location.href='#'">문의내역</button>
+    </div>
+ </div>
+{% endblock %}
+
+
+
+
+{% block script %}
+<script>
+const btn = document.querySelectorAll('.mypage_btn')[0];
+if(btn){
+    btn.classList.replace('mypage_btn', 'btn-chk')
+}
+</script>
+{% endblock %}
