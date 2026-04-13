@@ -1,0 +1,40 @@
+.mypage_list{
+    display: flex;
+    flex-direction: row;
+    font-size:18px;
+    margin-bottom: 0;
+    padding-left: 10px;
+    margin-top: 30px;
+
+}
+
+.btn-chk {
+    background-color:black;
+    color : white;
+    border-color: white;
+    border: none;
+    border-bottom: 2px solid white;
+}
+
+.mypage_btn:hover{
+    color : white;
+    border-color: white;
+    border-bottom: 2px solid white;
+}
+.mypage_btn{
+background-color:black;
+    color: gray;
+    border: none;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
+button{
+    margin: 0 20px;
+}
+
+.mypage_ad{
+    text-align:center;
+    margin-top:20px;
+    margin-bottom:20px;
+}

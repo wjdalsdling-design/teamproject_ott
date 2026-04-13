@@ -14,6 +14,7 @@ class users(db.Model):
     user_email = db.Column(db.String(100), unique=True, nullable=False)  # 이메일
     user_name = db.Column(db.String(50), nullable=False)  # 이름
     user_birth = db.Column(db.Date)  # 생년월일
+    user_phone = db.Column(db.String(20), unique=True, nullable=False)  # 고유값, 필수값 설정 핸드폰 번호
     user_gender = db.Column(db.String(10))  # 성별 (M/F 등)
 
     # --- 관계 설정 (Relationship) ---
