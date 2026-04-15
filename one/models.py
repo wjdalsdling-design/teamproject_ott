@@ -51,6 +51,7 @@ class User (db.Model):
 
 
 class Video(db.Model):
+    __tablename__ = 'video'
     # 프라이머리 키
     video_unique_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
@@ -67,12 +68,6 @@ class Video(db.Model):
     video_genres = db.Column(db.String(100))
     # --- 관계 설정 (Relationship) ---
 
-    # 1. 장르와 다대다(M:N) 연결
-    # secondary 설정을 통해 미리 만들어둔 video_genres 테이블을 거쳐 Genre 테이블과 연결됩니다.
-    # lazy='dynamic' 데이터를 가져오기전 추가 조건을 걸 수 있는 쿼리형태로 넘어옴.(데이터가 많을 경우 최적화를 위해 사용)
-    # True같은 경우 파이썬 리스트로 넘어옴.
-    genres = db.relationship('Genre', secondary=video_genres, backref=db.backref('videos', lazy='dynamic'))
-
     # --- 외래 키 (Foreign Key) ---
     # 이 비디오를 등록한 관리자 ID
     admin_unique_id = db.Column(db.Integer, db.ForeignKey('admin.admin_unique_id'), nullable=False)
@@ -86,16 +81,6 @@ class Video(db.Model):
 
     def __repr__(self):
         return f'<Video {self.video_title}>'
-
-
-# 2. 장르 테이블
-class Genre(db.Model):
-    genre_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    genre_name = db.Column(db.String(50), unique=True, nullable=False)  # 액션, 로맨스, SF 등
-
-    def __repr__(self):
-        return f'<Genre {self.genre_name}>'
-
 
 class VideoLike(db.Model):
     __tablename__ = 'videos_like' # ERD에 표기된 이름으로 맞춤
