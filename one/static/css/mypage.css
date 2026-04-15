@@ -1,40 +1,213 @@
-.mypage_list{
+/* 컨테이너: 헤더의 폭과 일치시킵니다 (보통 1200px~1400px 사이) */
+.mypage-wrapper {
+    width: 100%;
+    /* 만약 헤더에 특정 너비가 있다면 그 수치와 맞추세요. 예: max-width: 1400px; */
+    max-width: 100%;
+    margin: 0 auto;
+     padding: 20px 1.5%;
+    box-sizing: border-box;
+}
+.container {
+    max-width: 100% !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
+/* 1. 우측 상단 버튼 배치 */
+.top-action-wrapper {
     display: flex;
-    flex-direction: row;
-    font-size:18px;
-    margin-bottom: 0;
-    padding-left: 10px;
-    margin-top: 30px;
-
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    width: 100%;
 }
 
-.btn-chk {
-    background-color:black;
-    color : white;
-    border-color: white;
+.action-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    margin-left: 8px;
+    background-color: #2a2a2a;
+    color: #efefef;
+    border-radius: 4px;
+    font-size: 13px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.action-btn.primary {
+    background-color: #ff153c; /* 티빙 레드 */
+    font-weight: bold;
+}
+
+/* 2. 프로필 카드 (헤더폭에 맞춘 꽉 찬 카드) */
+.profile-card {
+    background-color: #1f1f1f;
+    width: 100%;
+    padding: 40px 30px; /* 내부 여백도 약간 줄임 */
+    border-radius: 12px;
+    margin-bottom: 40px;
+    box-sizing: border-box;
+}
+
+.user-main {
+    display: flex;
+    align-items: baseline;
+    gap: 15px;
+}
+
+.user-name {
+    font-size: 32px;
+    margin: 0;
+    color: #fff;
+}
+
+.user-id {
+    color: #888;
+    font-size: 16px;
+}
+
+.plan-badge {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 5px 12px;
+    background-color: #333;
+    color: #ff153c;
+    border-radius: 15px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* 3. 탭 버튼 스타일 (하얀 배경 제거) */
+/* 4. 탭 메뉴 라인도 꽉 채우기 */
+.mypage-nav {
+    width: 100%;
+    border-bottom: 1px solid #333;
+    margin-bottom: 30px;
+}
+
+.mypage-tabs {
+    display: flex;
+    gap: 30px;
+}
+
+.tab-btn {
+    background: none;
     border: none;
-    border-bottom: 2px solid white;
+    padding: 15px 0;
+    color: #888;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    outline: none;
 }
 
-.mypage_btn:hover{
-    color : white;
-    border-color: white;
-    border-bottom: 2px solid white;
-}
-.mypage_btn{
-background-color:black;
-    color: gray;
-    border: none;
-    border-bottom: 2px solid transparent;
-    transition: border-color 0.3s ease;
+/* 마우스를 올리거나 활성화 되었을 때 */
+.tab-btn:hover, .tab-btn.active {
+    color: #fff;
 }
 
-button{
-    margin: 0 20px;
+/* 활성화 된 탭 아래 흰색 줄 */
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; /* 부모 border-bottom과 겹치게 */
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #fff;
+}
+.tab-section { display: none; padding-top: 20px; }
+.tab-section.active { display: block; animation: fadeIn 0.3s ease-out; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* 시청내역 & 찜 그리드 */
+.content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 30px 20px;
 }
 
-.mypage_ad{
-    text-align:center;
-    margin-top:20px;
-    margin-bottom:20px;
+.content-card .img-box {
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    background: #2a2a2a;
+}
+
+.content-card img { width: 100%; height: 100%; object-fit: cover; }
+
+.progress-bar { position: absolute; bottom: 0; width: 100%; height: 3px; background: rgba(255,255,255,0.2); }
+.progress { height: 100%; background: #ff153c; } /* 티빙 레드 */
+
+.text-box h4 { margin: 10px 0 5px; font-size: 15px; font-weight: 500; }
+.text-box p, .genre-text { color: #888; font-size: 13px; }
+
+/* 구매내역 테이블 */
+.history-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.history-table th { text-align: left; padding: 15px; color: #666; font-size: 14px; border-bottom: 1px solid #333; }
+.history-table td { padding: 20px 15px; border-bottom: 1px solid #222; font-size: 15px; }
+.status-badge { background: #333; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+
+/* 문의내역 리스트 */
+.support-item { background: #1a1a1a; padding: 20px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #2a2a2a; }
+.support-status { font-weight: bold; margin-right: 10px; font-size: 13px; }
+.support-status.completed { color: #4caf50; }
+.support-status.pending { color: #ff9800; }
+.support-date { float: right; color: #666; font-size: 13px; }
+.support-title { margin-top: 10px; font-weight: 400; }
+
+.empty-msg {
+    display: flex;
+    justify-content: center; /* 가로 중앙 */
+    align-items: center;     /* 세로 중앙 */
+    min-height: 400px;       /* 탭 내부에서 차지할 최소 높이 */
+    width: 100%;
+
+    /* 폰트 스타일 수정 */
+    color: #999;             /* 너무 어둡지 않은 회색 */
+    font-size: 20px;         /* 기존보다 더 크게 키움 */
+    font-weight: 500;
+    letter-spacing: -0.5px;
+
+    /* 선택 사항: 텍스트가 조금 더 부드럽게 보이도록 */
+    opacity: 0.8;
+}
+
+.user-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+/* 마이페이지 유저 이름 옆 작은 아이콘 */
+.name-grade-icon {
+    width: 28px;  /* 24px에서 조금만 확대 */
+    height: 28px;
+    vertical-align: middle;
+    margin-bottom: 4px; /* 이름과 베이스라인 맞추기 */
+}
+
+/* 뱃지 내부 아이콘 */
+.plan-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px; /* 아이콘과 글자 사이 간격 */
+    padding: 4px 12px;
+    border-radius: 20px;
+    background-color: #222;
+    color: #ff153c;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.badge-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+/* 프리미엄 등급일 때 뱃지 배경색 차별화 (선택사항) */
+.plan-badge:has(img[src*="premium"]) {
+    background: linear-gradient(45deg, #f3d02a, #e5a010);
+    color: #000;
 }

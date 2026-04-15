@@ -4,8 +4,145 @@ from datetime import datetime
 from functools import wraps
 from one.models import User, db
 from werkzeug.security import generate_password_hash, check_password_hash
+import requests
+import urllib.parse
 
 bp = Blueprint('auth', __name__, url_prefix='/')
+
+NAVER_CLIENT_ID = "lcxQzP8cM2q3js42vNfp"
+NAVER_CLIENT_SECRET = "sGNLiu_pnW"
+NAVER_REDIRECT_URI = "http://127.0.0.1:5000/auth/naver/callback"
+
+KAKAO_CLIENT_ID = "84dc069e3a8f7c1f8b250fd44aee633b"
+REDIRECT_URI = "http://127.0.0.1:5000/auth/kakao/callback"
+
+@bp.route('/auth/naver/login')
+def naver_login():
+    state = "1234"  # 일단 고정값 OK
+
+    url = "https://nid.naver.com/oauth2.0/authorize?" + urllib.parse.urlencode({
+        "response_type": "code",
+        "client_id": NAVER_CLIENT_ID,
+        "redirect_uri": NAVER_REDIRECT_URI,
+        "state": state
+    })
+
+    return redirect(url)
+
+@bp.route('/auth/naver/callback')
+def naver_callback():
+    code = request.args.get('code')
+    state = request.args.get('state')
+
+    # 토큰 요청
+    token_res = requests.get("https://nid.naver.com/oauth2.0/token", params={
+        "grant_type": "authorization_code",
+        "client_id": NAVER_CLIENT_ID,
+        "client_secret": NAVER_CLIENT_SECRET,
+        "code": code,
+        "state": state
+    })
+
+    access_token = token_res.json().get("access_token")
+
+    # 사용자 정보 요청
+    user_res = requests.get(
+        "https://openapi.naver.com/v1/nid/me",
+        headers={"Authorization": f"Bearer {access_token}"}
+    )
+
+    user_json = user_res.json()
+    print("네이버 유저:", user_json)
+
+    email = user_json.get("response", {}).get("email")
+
+    if not email:
+        return "이메일 못 받아옴"
+
+    user = User.query.filter_by(user_email=email).first()
+
+    if not user:
+        user = User(
+            user_email=email,
+            user_password="",
+            user_name=email
+        )
+        db.session.add(user)
+        db.session.commit()
+
+    session['user'] = user.user_unique_id
+
+    return redirect(url_for('home.home'))
+
+
+
+
+
+
+@bp.route('/auth/kakao/login')
+def kakao_login():
+    url = f"https://kauth.kakao.com/oauth/authorize?client_id={KAKAO_CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=account_email"
+    return redirect(url)
+
+
+@bp.route('/auth/kakao/callback')
+def kakao_callback():
+    code = request.args.get('code')
+
+    # 토큰 요청
+    token_url = "https://kauth.kakao.com/oauth/token"
+    data = {
+        "grant_type": "authorization_code",
+        "client_id": KAKAO_CLIENT_ID,
+        "redirect_uri": REDIRECT_URI,
+        "code": code
+    }
+    token_res = requests.post(token_url, data=data)
+    token_json = token_res.json()
+
+    print("토큰 응답:", token_json)  # 🔥 추가
+
+    access_token = token_json.get("access_token")
+
+    if not access_token:
+        return "토큰 못 받아옴"
+
+    # 사용자 정보 요청
+    user_url = "https://kapi.kakao.com/v2/user/me"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    user_res = requests.get(user_url, headers=headers)
+
+    user_json = user_res.json()
+    print(user_json)  # 🔥 이거 추가
+
+    # 👇 여기 추가
+    email = user_json.get("kakao_account", {}).get("email")
+
+    if not email:
+        print("❌ 이메일 못 받아옴")
+        return "이메일 못 받아옴"
+
+    print("카카오 이메일:", email)
+
+    # 기존 로직
+    user = User.query.filter_by(user_email=email).first()
+
+    if not user:
+        user = User(
+            user_email=email,
+            user_password="",
+            user_name=email  # ⭐ 반드시 있어야 함
+        )
+        db.session.add(user)
+        db.session.commit()
+
+    if not user.user_active:
+        flash("이 계정은 이용이 제한되었습니다.")
+        return redirect(url_for('auth.login'))
+
+    session['user'] = user.user_unique_id
+
+    return redirect(url_for('home.index'))
 
 
 @bp.route('/signup', methods=['GET', 'POST'])
@@ -45,7 +182,6 @@ def signup():
 
             # 유저 생성
             user = User(
-                user_id=email,
                 user_password=hashed_pw,
                 user_email=email,
                 user_name=name,
@@ -97,6 +233,14 @@ def login():
 
 @bp.route('/logout')
 def logout():
+    access_token = session.get('kakao_token')
+
+    if access_token:
+        requests.post(
+            "https://kapi.kakao.com/v1/user/logout",
+            headers={"Authorization": f"Bearer {access_token}"}
+        )
+
     session.clear()
     return redirect(url_for('auth.login'))
 
@@ -159,10 +303,14 @@ def find_id():
 def reset_password():
     form = ResetPasswordForm()
 
+    if request.method == 'POST':
+        print("form errors:", form.errors)
+        print("validate:", form.validate())
+
     if form.validate_on_submit():
         user = User.query.filter_by(
             user_email=form.email.data,
-            user_id=form.user_id.data
+            user_name=form.name.data
         ).first()
 
         if user:

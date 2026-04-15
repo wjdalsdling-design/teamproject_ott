@@ -9,13 +9,21 @@ class User (db.Model):
     user_unique_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     # 사용자 기본 정보
-    user_id = db.Column(db.String(50), unique=True, nullable=False)  # 로그인 아이디
-    user_password = db.Column(db.String(255), nullable=False)  # 암호화된 비번
+    # user_id = db.Column(db.String(50), unique=True)  # 로그인 아이디
+    user_password = db.Column(db.String(200), nullable=True)  # 암호화된 비번
     user_email = db.Column(db.String(100), unique=True, nullable=False)  # 이메일
-    user_name = db.Column(db.String(50), nullable=False)  # 이름
-    user_birth = db.Column(db.Date)  # 생년월일
-    user_phone = db.Column(db.String(20), unique=True, nullable=False)  # 고유값, 필수값 설정 핸드폰 번호
-    user_gender = db.Column(db.String(10))  # 성별 (M/F 등)
+
+    user_name = db.Column(db.String(50))  # 이름
+    user_birth = db.Column(db.DateTime, nullable=True)  # 생년월일
+    user_phone = db.Column(db.String(20), nullable=True)  # 고유값, 필수값 설정 핸드폰 번호
+    user_gender = db.Column(db.String(10), nullable=True)  # 성별 (M/F 등)
+
+    # [추가] 1. 어떤 방식으로 처음 가입했는지 (통계 및 본인인증용)
+    signup_method = db.Column(db.String(20), default='email')  # 'email' 또는 'kakao'
+
+    # [추가] 2. 카카오 연동 여부를 확인하는 고유 식별자
+    # 이 값이 NULL이면 연동 안됨, 값이 있으면 연동됨!
+    kakao_id = db.Column(db.String(100), unique=True, nullable=True)
     user_active = db.Column(db.Boolean, nullable=False,default=True)  # 활성화된 유저인지, 차단(블락된)유저인지 True는 로그인가능 False는 로그인 불가능
 
     # --- 관계 설정 (Relationship) ---
@@ -39,15 +47,7 @@ class User (db.Model):
     # 예를들어 print(user)를 할 경우 메모리 주소값이 나오게 되는데 이 함수가 있으면 f-string를 통해 user아이디를 보여준다.
     # 관례적으로 개발자가 코드를 짜고 디버깅할 때 편하기 위해 꼭 넣는 코드라 해서 넣어봄
     def __repr__(self):
-        return f'<User {self.user_id}>'
-
-    # 1. 연결 테이블 (M:N 관계의 징검다리)
-    # 실제 클래스로 만들지 않고 db.Table을 사용하는 것이 조인(Join) 시 성능과 관리에 유리.
-video_genres = db.Table('video_genres',
-                        db.Column('video_unique_id', db.Integer, db.ForeignKey('video.video_unique_id'),
-                                  primary_key=True),
-                        db.Column('genre_id', db.Integer, db.ForeignKey('genre.genre_id'), primary_key=True)
-                        )
+        return f'<User {self.email}>'
 
 
 class Video(db.Model):
@@ -63,9 +63,8 @@ class Video(db.Model):
     video_date = db.Column(db.Date)  # 개봉/등록 날짜
     video_age_limit = db.Column(db.String(20))  # 시청 등급 (예: 15세, All)
     video_synopsis = db.Column(db.Text)  # 줄거리요약
-
-    # [추가] ERD에 정의된 관리자 외래키
-    admin_unique_id = db.Column(db.Integer, db.ForeignKey('admin.admin_unique_id'))
+    video_is_movie = db.Column(db.Boolean, default=True)
+    video_genres = db.Column(db.String(100))
     # --- 관계 설정 (Relationship) ---
 
     # 1. 장르와 다대다(M:N) 연결
@@ -303,7 +302,7 @@ class Notice(db.Model):
 
     # [ERD 반영] 작성자 외래키: 어떤 관리자가 작성했는가
     admin_unique_id = db.Column(db.Integer, db.ForeignKey('admin.admin_unique_id'), nullable=False)
-
+    # 작성한 관리자의 ID를 참조합니다.
     # 공지사항 내용
     title = db.Column(db.String(255), nullable=False)  # 제목
     content = db.Column(db.Text, nullable=False)  # 내용
@@ -315,8 +314,7 @@ class Notice(db.Model):
     # 작성일
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     # --- 외래 키 (Foreign Key) ---
-    # 작성한 관리자의 ID를 참조합니다.
-    admin_unique_id = db.Column(db.Integer, db.ForeignKey('admin.admin_unique_id'), nullable=False)
+
 
     def __repr__(self):
         return f'<Notice {self.title}>'

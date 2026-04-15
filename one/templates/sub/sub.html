@@ -59,7 +59,7 @@
                             <h2>제목-타이틀</h2>
                             <div class="text_mini_box2">
                                 <p><img src="{{ url_for('static', filename='img/main_img/icon-star-full-v2.svg') }}"
-                                        alt="별">별점 • 장르 • 년도 • 방영시간</p>
+                                        alt="별">별점 • 장르 • 년도 • 방영시간 • 시즌</p>
                                 <div class="age_box">19+</div>
                                 <div class="display_box">HD</div>
                             </div>
@@ -81,29 +81,64 @@
                 <div class="info_box">시놉시스</div>
             </div>
         </div>
-        <div class="col-4 p-3 mb-2 bg-success text-white">
+        <div class="col-4 text-white">
             <div class="tab">
                 <div class="tab-menu">
-                    <button class="tab-link active" onclick="openTab(event, 'tab1')">리뷰</button>
-                    <button class="tab-link" onclick="openTab(event, 'tab2')">비슷한 콘텐츠</button>
+                    <button class="tab-link active" onclick="openTab(event, 'tab1')">에피소드</button>
+                    <button class="tab-link" onclick="openTab(event, 'tab2')">리뷰</button>
+                    <button class="tab-link" onclick="openTab(event, 'tab3')">비슷한 콘텐츠</button>
                 </div>
 
-                <div id="tab1" class="tab-content" style="display:block;">
-                    <h3>첫 번째 탭</h3>
-                    <p>여기는 첫 번째 메뉴의 내용이 들어갑니다.</p>
-                </div>
+                <div id="tab1" class="tab-content">
+    <div class="head_box" style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
 
-                <div id="tab2" class="tab-content">
-                    <h3>두 번째 탭</h3>
-                    <p>두 번째 메뉴의 상세 설명입니다.</p>
-                </div>
+        <div class="dropdown">
+            <button type="button" class="dropbtn" onclick="toggleMenu('menu1')">
+                <span id="text1">전체 시즌</span>
+                <img src="{{url_for('static', filename='img/main_img/drop_down.svg')}}" alt="▼">
+            </button>
+            <div id="menu1" class="dropdown-content">
+                <button type="button" onclick="updateFilter('season', 'all', '전체 시즌', 'text1', 'menu1')">전체 시즌</button>
+                <button type="button" onclick="updateFilter('season', '1', '시즌 1', 'text1', 'menu1')">시즌 1</button>
+                <button type="button" onclick="updateFilter('season', '2', '시즌 2', 'text1', 'menu1')">시즌 2</button>
             </div>
+        </div>
+
+        <div class="dropdown">
+            <button type="button" class="dropbtn" onclick="toggleMenu('menu2')">
+                <span id="text2">오래된 순</span>
+                <img src="{{url_for('static', filename='img/main_img/drop_down.svg')}}" alt="▼">
+            </button>
+            <div id="menu2" class="dropdown-content">
+                <button type="button" onclick="updateFilter('sort', 'old', '오래된 순', 'text2', 'menu2')">오래된 순</button>
+                <button type="button" onclick="updateFilter('sort', 'new', '최신 순', 'text2', 'menu2')">최신 순</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="content-list">
+        <div class="item" data-season="1" data-sort="old">시즌 1 - 오래된 영상 A</div>
+        <div class="item" data-season="1" data-sort="new">시즌 1 - 최신 영상 B</div>
+        <div class="item" data-season="2" data-sort="old">시즌 2 - 오래된 영상 C</div>
+        <div class="item" data-season="2" data-sort="new">시즌 2 - 최신 영상 D</div>
+    </div>
+</div>
+                <!-- tab1 end -->
+
+            </div>
+        </div>
+        <div id="tab2" class="tab-content">
 
         </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-            crossorigin="anonymous"></script>
+        <div id="tab3" class="tab-content">
+
+        </div>
+        </div>
+
+        </div>
+
+
     </section>
 
     <script>
@@ -124,7 +159,82 @@
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
         }
+
+        function toggleDropdown(menuId) {
+            const menu = document.getElementById(menuId);
+            const allMenus = document.querySelectorAll('.dropdown-content');
+
+            allMenus.forEach(m => {
+                if (m.id !== menuId) m.classList.remove('show');
+            });
+            menu.classList.toggle('show');
+        }
+
+       // 현재 선택된 필터값 저장
+let currentFilters = {
+    season: 'all',
+    sort: 'old'
+};
+
+// 드롭다운 열기/닫기
+function toggleMenu(menuId) {
+    const menus = document.querySelectorAll('.dropdown-content');
+    menus.forEach(m => {
+        if (m.id !== menuId) m.classList.remove('show');
+    });
+    document.getElementById(menuId).classList.toggle('show');
+}
+
+// 필터 업데이트 및 적용
+function updateFilter(type, value, text, labelId, menuId) {
+    // 버튼 텍스트 바꾸고 메뉴 닫기
+    document.getElementById(labelId).innerText = text;
+    document.getElementById(menuId).classList.remove('show');
+
+    // 선택값 저장
+    currentFilters[type] = value;
+
+    // 리스트 새로고침
+    applyFilters();
+}
+
+function applyFilters() {
+    const items = document.querySelectorAll('.item');
+    
+    items.forEach(item => {
+        const itemSeason = item.getAttribute('data-season');
+        const itemSort = item.getAttribute('data-sort');
+
+        // 필터 조건 체크
+        const seasonMatch = (currentFilters.season === 'all' || currentFilters.season === itemSeason);
+        const sortMatch = (currentFilters.sort === itemSort);
+
+        // 두 조건이 다 맞아야만 보임
+        if (seasonMatch && sortMatch) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+// 처음 실행 시 필터 적용 (초기값 설정)
+applyFilters();
+
+// 화면 밖 클릭 시 닫기
+window.onclick = function(e) {
+    if (!e.target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown-content').forEach(m => m.classList.remove('show'));
+    }
+}
+
+
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>

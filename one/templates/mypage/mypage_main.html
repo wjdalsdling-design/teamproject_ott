@@ -10,30 +10,148 @@
 
 
 {% block content %}
-<div class="container-fluid d-flex justify-content-between">
-    <div>
-             {{user_data.user_id}}
+<div class="mypage-wrapper">
+
+    <div class="top-action-wrapper">
+        <div class="right-actions">
+            <a href="{{ url_for('mypage.change_info') }}" class="action-btn">회원정보 수정</a>
+            <a href="{{ url_for('mypage.support') }}" class="action-btn">고객센터</a>
+            <a href="{{ url_for('mypage.subscription') }}" class="action-btn primary">이용권 구매</a>
+        </div>
     </div>
-    <div class="btn-group" role="group" aria-label="Basic example">
-        <button type="button" class="btn btn-primary">회원정보 수정 </button>
-        <button type="button" class="btn btn-primary">고객센터</button>
-        <button type="button" class="btn btn-primary">구독권구매</button>
-    </div>
+
+    <section class="profile-section">
+        <div class="profile-card">
+            <div class="profile-info">
+                <div class="user-main">
+                    <h2 class="user-name">{{ user.user_name }}</h2>
+
+                    {% if user.subscriptions %}
+                        {% set plan = user.subscriptions[0].plan.plan_name.lower() %}
+                        <img src="{{ url_for('static', filename='img/' + plan + '.png') }}" class="name-grade-icon" alt="{{ plan }}">
+                    {% endif %}
+
+                    <span class="user-id">@{{ user.user_email }}</span>
+                </div>
+
+                <div class="subscription-status">
+                   <span class="plan-badge">
+    {% if user.subscriptions %}
+        {% set plan = user.subscriptions[0].plan.plan_name.lower() %}
+        <img src="{{ url_for('static', filename='img/' + plan + '.png') }}" class="badge-icon">
+        <span class="badge-text">{{ user.subscriptions[0].plan.plan_name }} 이용 중</span>
+    {% else %}
+        미구독
+    {% endif %}
+</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <nav class="mypage-nav">
+        <div class="mypage-tabs">
+            <button class="tab-btn active" data-target="watch-history">시청내역</button>
+            <button class="tab-btn" data-target="purchase-history">구매내역</button>
+            <button class="tab-btn" data-target="wishlist">찜</button>
+            <button class="tab-btn" data-target="support">문의내역</button>
+        </div>
+    </nav>
+
+
+        <div class="tab-content-container">
+            <section id="watch-history" class="tab-section active">
+                {% if user.watch_histories %}
+                    <div class="content-grid">
+                        {% for history in user.watch_histories | sort(attribute='updated_at', reverse=True) %}
+                        <div class="content-card">
+                            <div class="img-box">
+                                <img src="{{ history.video.video_thumbnail }}" alt="thumbnail">
+                                {% if not history.is_finished %}
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 50%;"></div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="text-box">
+                                <h4>{{ history.video.video_title }}</h4>
+                                <p>{{ history.updated_at.strftime('%Y.%m.%d') }} 시청</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-msg">시청하신 내역이 없습니다.</div>
+                {% endif %}
+            </section>
+
+    <section id="purchase-history" class="tab-section">
+        {% if user.payments %}
+            <div class="history-table-wrapper">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>결제일</th>
+                            <th>이용권 정보</th>
+                            <th>결제금액</th>
+                            <th>상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in user.payments | sort(attribute='paid_at', reverse=True) %}
+                        <tr>
+                            <td>{{ payment.paid_at.strftime('%Y.%m.%d') }}</td>
+                            <td>{{ payment.subscription.plan.plan_name }}</td>
+                            <td>{{ "{:,.0f}".format(payment.price) }}원</td>
+                            <td><span class="status-badge">{{ payment.status }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-msg">구매 내역이 없습니다.</div>
+        {% endif %}
+    </section>
+
+    <section id="wishlist" class="tab-section">
+        {% if user.wishlist %}
+            <div class="content-grid">
+                {% for wish in user.wishlist %}
+                <div class="content-card">
+                    <div class="img-box">
+                        <img src="{{ wish.video.video_thumbnail }}" alt="thumbnail">
+                    </div>
+                    <div class="text-box">
+                        <h4>{{ wish.video.video_title }}</h4>
+                        <span class="genre-text">{{ wish.video.video_age_limit }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-msg">찜한 콘텐츠가 없습니다.</div>
+        {% endif %}
+    </section>
+
+    <section id="support" class="tab-section">
+        <div class="support-list">
+            {% for support in user.supports | sort(attribute='created_at', reverse=True) %}
+            <div class="support-item">
+                <div class="support-info">
+                    <span class="support-status {{ support.status }}">{{ '답변완료' if support.status == 'completed' else '검토중' }}</span>
+                    <span class="support-cat">[{{ support.category }}]</span>
+                    <span class="support-date">{{ support.created_at.strftime('%Y.%m.%d') }}</span>
+                </div>
+                <h4 class="support-title">{{ support.title }}</h4>
+            </div>
+            {% else %}
+            <div class="empty-msg">문의 내역이 없습니다.</div>
+            {% endfor %}
+        </div>
+    </section>
 </div>
-
-<div class="container-fluid mypage_ad">
- <p>이용권을 구독하고 img img 등 인기TV프로그램과 다양한 영화를 자유롭게 시청하세요</p>
 </div>
-
-
- <div class="container-fluid">
-      <div class="mypage_list">
-         <button type="button" class="mypage_btn" onclick="location.href='#'">시청내역</button>
-         <button type="button" class="mypage_btn" onclick="location.href='#'">구매내역</button>
-         <button type="button" class="mypage_btn" onclick="location.href='#'">찜</button>
-         <button type="button" class="mypage_btn" onclick="location.href='#'">문의내역</button>
-    </div>
- </div>
 {% endblock %}
 
 
@@ -45,5 +163,19 @@ const btn = document.querySelectorAll('.mypage_btn')[0];
 if(btn){
     btn.classList.replace('mypage_btn', 'btn-chk')
 }
+
+document.querySelectorAll('.tab-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const target = button.getAttribute('data-target');
+
+        // 1. 모든 버튼에서 active 제거 후 클릭한 버튼에 추가
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        // 2. 모든 섹션 숨긴 후 타겟 섹션만 표시
+        document.querySelectorAll('.tab-section').forEach(section => section.classList.remove('active'));
+        document.getElementById(target).classList.add('active');
+    });
+});
 </script>
 {% endblock %}

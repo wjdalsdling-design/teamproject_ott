@@ -27,41 +27,67 @@
 
         <table class="admin_table">
             <thead>
-                <tr>
-                    <th>번호</th>
-                    <th>아이디</th>
-                    <th>이름</th>
-                    <th>이메일</th>
-                    <th>전화번호</th>
-                    <th>성별</th>
-                    <th>비활성화</th>
-                </tr>
+            <tr>
+                <th>번호</th>
+                <th>아이디</th>
+                <th>이름</th>
+                <th>이메일</th>
+                <th>전화번호</th>
+                <th>성별</th>
+                <th>상태</th>
+                <th>상태변경</th>
+            </tr>
             </thead>
             <tbody>
-                {% for member in member_list %}
-                <tr>
-                    <td>{{ member.user_unique_id }}</td>
-                    <td>{{ member.user_id }}</td>
-                    <td>{{ member.user_name }}</td>
-                    <td>{{ member.user_email }}</td>
-                    <td>{{ member.user_phone }}</td>
-                    <td>{{ member.user_gender }}</td>
-                    <td>
-                        <form action="{{ url_for('admin.member_delete', user_id=member.user_unique_id) }}" method="post">
-                            <button type="submit" class="delete_btn">비활성화</button>
-                        </form>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="7">회원 정보가 없습니다.</td>
-                </tr>
-                {% endfor %}
+            {% for member in member_list %}
+            <tr>
+                <td>{{ member.user_unique_id }}</td>
+                <td>{{ member.user_id }}</td>
+                <td>{{ member.user_name }}</td>
+                <td>{{ member.user_email }}</td>
+                <td>{{ member.user_phone }}</td>
+                <td>{{ member.user_gender }}</td>
+                <td>
+                    {% if member.user_active %}
+                    <span class="status_active">활성</span>
+                    {% else %}
+                    <span class="status_inactive">비활성</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <form action="{{ url_for('admin.member_toggle', user_id=member.user_unique_id) }}" method="post"
+                          onsubmit="return confirm('상태를 변경하시겠습니까?');">
+                        {% if member.user_active %}
+                        <button type="submit" class="btn delete_btn">비활성화</button>
+                        {% else %}
+                        <button type="submit" class="btn restore_btn">활성화</button>
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7">회원 정보가 없습니다.</td>
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
     </main>
 
 </div>
 
+<script>
+    window.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        if (urlParams.get("changed") === "1") {
+            alert("상태가 변경되었습니다.");
+
+            // ?changed=1 제거
+            const cleanUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, cleanUrl);
+        }
+    });
+</script>
 </body>
 </html>

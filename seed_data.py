@@ -1,4 +1,6 @@
 from datetime import datetime, date, timezone, timedelta
+import random
+
 from one import db, create_app
 from one.models import (
     User, Video, Genre, Plan, Admin, Subscription,
@@ -10,131 +12,99 @@ from one.models import (
 app = create_app()
 
 
-def seed_db():
+def seed_data():
     with app.app_context():
-        print("--- 데이터 삽입 시작 ---")
+        # 0. 기존 데이터 초기화 (선택 사항)
+        db.drop_all()
+        db.create_all()
 
-        # [LAYER 1] 부모 테이블 (FK 참조를 받기만 함)
-        # ---------------------------------------------------------
-        # 관리자
+        # 1. 관리자 및 요금제 생성
         admin = Admin(
             admin_id="admin_01",
-            admin_password="hashed_admin_password",  # 실서비스 시 암호화 필요
-            admin_name="운영자",
+            admin_password="hashed_password_123",
+            admin_name="운영팀장",
             admin_role="superadmin"
         )
-        # 장르
-        g_action = Genre(genre_name="액션")
-        g_sf = Genre(genre_name="SF")
-        # 요금제
-        plan_p = Plan(plan_name="Premium", price=14500)
-        # 사용자
-        user = User(
-            user_id="testuser_01",
-            user_password="hashed_user_password",
-            user_email="test@example.com",
+        db.session.add(admin)
+
+        premium_plan = Plan(plan_name="premium", price=14500)
+        db.session.add(premium_plan)
+        db.session.flush()  # ID 생성을 위해 flush
+
+        # 2. 유저 생성 (signup_method default, kakao_id null)
+        test_user = User(
+            user_email="testuser@example.com",
+            user_password="user_password_456",
             user_name="홍길동",
-            user_birth=date(1995, 1, 1),
             user_phone="010-1234-5678",
-            user_gender="M"
+            user_gender="M",
+            signup_method="email",  # default 값 명시
+            kakao_id=None  # null 설정
         )
+        db.session.add(test_user)
+        db.session.flush()
 
-        db.session.add_all([admin, g_action, g_sf, plan_p, user])
-        db.session.flush()  # ID 생성을 위해 메모리상 반영
-
-        # [LAYER 2] 1차 자식 테이블 (LAYER 1의 ID를 참조)
-        # ---------------------------------------------------------
-        # 영상 (Admin 참조)
-        video = Video(
-            video_title="인터스텔라",
-            video_director="크리스토퍼 놀란",
-            video_actor="매튜 맥커너히",
-            video_url="https://example.com/interstellar.mp4",
-            video_thumbnail="https://example.com/thumb.jpg",
-            video_date=date(2014, 11, 6),
-            video_age_limit="12세",
-            admin_unique_id=admin.admin_unique_id
-        )
-
-        # 다대다 관계 (video_genres 연결 테이블 처리)
-        video.genres.append(g_sf)
-        video.genres.append(g_action)
-
-        # 구독 (User, Plan 참조)
+        # 3. 구독 정보 생성 (현재 활성화 상태)
         sub = Subscription(
-            user_unique_id=user.user_unique_id,
-            plan_id=plan_p.plan_id,
+            user_unique_id=test_user.user_unique_id,
+            plan_id=premium_plan.plan_id,
+            start_date=datetime.now(timezone.utc),
             end_date=datetime.now(timezone.utc) + timedelta(days=30),
             status='active'
         )
+        db.session.add(sub)
 
-        # 공지사항 (Admin 참조)
-        notice = Notice(
-            admin_unique_id=admin.admin_unique_id,
-            title="환영합니다!",
-            content="OTT 서비스 오픈 안내입니다.",
-            is_pinned=True
-        )
+        # 4. 영상 데이터 12개 생성
+        videos = []
+        for i in range(1, 13):
+            video = Video(
+                video_title=f"대작 영화 시리즈 {i}",
+                video_director=f"감독 {i}",
+                video_url=f"https://stream.example.com/v{i}",
+                video_thumbnail=f"https://img.example.com/t{i}.jpg",
+                admin_unique_id=admin.admin_unique_id
+            )
+            videos.append(video)
+            db.session.add(video)
 
-        # 고객센터 문의 (User 참조)
-        support = Support(
-            user_unique_id=user.user_unique_id,
-            category="결제문의",
-            title="환불 규정이 궁금해요",
-            content="구독 취소 시 환불은 어떻게 되나요?",
-            status="pending"
-        )
-
-        db.session.add_all([video, sub, notice, support])
         db.session.flush()
 
-        # [LAYER 3] 2차 자식 테이블 (LAYER 2의 ID를 참조하거나 복합 관계)
-        # ---------------------------------------------------------
-        # 시청 기록 (User, Video 참조)
-        history = WatchHistory(
-            user_unique_id=user.user_unique_id,
-            video_unique_id=video.video_unique_id,
-            last_played_time=3600,
-            is_finished=False
-        )
+        # 5. 유저 활동 데이터 (시청기록, 찜하기, 문의)
+        for i, video in enumerate(videos):
+            # (1) 시청 기록 (12개)
+            history = WatchHistory(
+                user_unique_id=test_user.user_unique_id,
+                video_unique_id=video.video_unique_id,
+                last_played_time=i * 100,  # 조금씩 다르게 설정
+                is_finished=(i % 2 == 0)  # 짝수 영상은 다 본 걸로 처리
+            )
+            db.session.add(history)
 
-        # 리뷰 (User, Video 참조)
-        review = Review(
-            user_unique_id=user.user_unique_id,
-            video_unique_id=video.video_unique_id,
-            comment="최고의 우주 영화!",
-            rating=5
-        )
+            # (2) 찜하기 (12개)
+            wish = VideoWish(
+                user_unique_id=test_user.user_unique_id,
+                video_unique_id=video.video_unique_id
+            )
+            db.session.add(wish)
 
-        # 결제 (User, Subscription 참조)
-        payment = Payment(
-            user_unique_id=user.user_unique_id,
-            subscription_id=sub.subscription_id,
-            price=plan_p.price,
-            status="success"
-        )
+            # (3) 문의 남기기 (12개)
+            support = Support(
+                user_unique_id=test_user.user_unique_id,
+                category="영상오류",
+                title=f"영상 {i}번이 안 나와요.",
+                content=f"이 영상({video.video_title})의 버퍼링이 너무 심합니다. 확인 부탁드려요.",
+                status="pending"
+            )
+            db.session.add(support)
 
-        # 문의 답변 (Support, Admin 참조)
-        answer = SupportAnswer(
-            support_id=support.support_id,
-            admin_unique_id=admin.admin_unique_id,
-            content="결제 후 7일 이내 시청 기록이 없을 시 전액 환불 가능합니다."
-        )
-
-        # 좋아요 및 찜
-        like = VideoLike(user_unique_id=user.user_unique_id, video_unique_id=video.video_unique_id)
-        wish = VideoWish(user_unique_id=user.user_unique_id, video_unique_id=video.video_unique_id)
-
-        db.session.add_all([history, review, payment, answer, like, wish])
-
-        # 4. 최종 커밋
+        # 6. 최종 커밋
         try:
             db.session.commit()
-            print("✅ 데이터 삽입 완료! one.db를 확인하세요.")
+            print("✅ 1명의 유저와 12개의 활동 데이터가 성공적으로 생성되었습니다.")
         except Exception as e:
             db.session.rollback()
             print(f"❌ 오류 발생: {e}")
 
 
 if __name__ == "__main__":
-    seed_db()
+    seed_data()
