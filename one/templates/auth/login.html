@@ -56,11 +56,9 @@
                           style="cursor: pointer; font-size: 0.75rem; font-weight: bold; color: #adb5bd;">Show</span>
                 </div>
 
-                <!-- 아이디 저장 & 자동 로그인 -->
+                <!-- 자동 로그인 -->
                 <div class="d-flex gap-3 mb-4 text-secondary" style="font-size: 0.85rem;">
-                    <label class="d-flex align-items-center gap-1">
-                        <input type="checkbox" name="save_id" class="form-check-input bg-dark border-secondary"> 아이디 저장
-                    </label>
+
                     <label class="d-flex align-items-center gap-1">
                         <input type="checkbox" name="auto_login" class="form-check-input bg-dark border-secondary"> 자동
                         로그인
@@ -75,7 +73,7 @@
 
             <!-- 하단 링크 -->
             <div class="text-center mb-3" style="font-size: 0.85rem;">
-                <a href="{{ url_for('auth.find_id') }}"" class="text-secondary text-decoration-none">아이디 찾기</a>
+                <a href="{{ url_for('auth.find_id') }}"" class="text-secondary text-decoration-none">계정 찾기</a>
                 <span class="text-secondary mx-2">|</span>
                 <a href="{{ url_for('auth.reset_password') }}" class="text-secondary text-decoration-none">비밀번호 재설정</a>
                 <span class="text-secondary mx-2">|</span>
@@ -86,9 +84,9 @@
             <div class="text-center border-top border-secondary pt-3">
                 <p class="text-secondary mb-3" style="font-size: 0.85rem;">또는 다른 서비스 계정으로 로그인</p>
                 <div class="d-flex justify-content-center gap-2 mb-3">
-                    <a href="#"><img src="{{ url_for('static', filename='img/kakao_login.png') }}" width="160"
+                    <a href="{{ url_for('auth.kakao_login') }}"><img src="{{ url_for('static', filename='img/kakao_login.png') }}" width="160"
                                      alt="카카오"></a>
-                    <a href="#"><img src="{{ url_for('static', filename='img/NAVER_login.png') }}" width="160"
+                    <a href="{{ url_for('auth.naver_login') }}"><img src="{{ url_for('static', filename='img/NAVER_login.png') }}" width="160"
                                      alt="네이버"></a>
                 </div>
                 <p style="font-size: 0.7rem; line-height: 1.5; color: #aaaaaa; opacity: 0.8;">

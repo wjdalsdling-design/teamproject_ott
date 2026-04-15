@@ -39,7 +39,7 @@ class FindIdForm(FlaskForm):
 
 class ResetPasswordForm(FlaskForm):
     email = StringField('이메일', validators=[DataRequired(), Email()])
-    user_id = StringField('아이디', validators=[DataRequired()])
+    name = StringField('이름', validators=[DataRequired()])
 
     password1 = PasswordField('새 비밀번호', validators=[DataRequired()])
     password2 = PasswordField(
