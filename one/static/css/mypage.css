@@ -32,7 +32,6 @@
     transition: 0.3s;
     border: 1px solid transparent;
 }
-
 .actionbtn.primary {
     background-color: #ff153c; /* 티빙 레드 */
 }

@@ -31,7 +31,7 @@ def change_info():
 
     # 1. 세션에서 user_unique_id 가져오기
     # 1. 마이페이지와 동일하게 유저 조회 (고정값 1 사용 중이시니 동일하게 적용)
-    user_unique_id = session.get('user_unique_id')
+    user_unique_id = session.get('user')
     user_data = User.query.get_or_404(user_unique_id)
 
     if request.method == 'POST':
