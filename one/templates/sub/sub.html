@@ -115,13 +115,60 @@
                     </div>
                     <div class="rating2 d-flex align-items-center">3.5</div>
                 </div>
-                <div class="review-box2 w-100 d-flex justify-content-end">베스트순<img src="{{url_for('static', filename='img/main_img/drop_down.svg')}}" alt="아래화살"></div>
+
+                <div class="comments w-100 d-flex justify-content-center">
+                    <span class="star" data-value="1"></span>
+                    <span class="star" data-value="2"></span>
+                    <span class="star" data-value="3"></span>
+                    <span class="star" data-value="4"></span>
+                    <span class="star" data-value="5"></span>
+                </div>
+
+                <div class="comment-input-wrap">
+                    <input type="text" id="nickname" placeholder="닉네임">
+                    <textarea id="comment-text" placeholder="리뷰 내용을 입력하세요."></textarea>
+                    <button id="submit-btn" type="button">등록</button>
+                </div>
+
+                <div class="review-box2 w-100 d-flex justify-content-end align-items-end">베스트순<img
+                        src="{{url_for('static', filename='img/main_img/drop_down.svg')}}" alt="아래화살"></div>
+
+                <div class="comment-list" id="comment-list"></div>
+
+            </div>
+
+
+
+            <div class="rating3">
+                <div class="user-box1 w-100 d-flex">
+                    <span class="mini_star fill"></span> <span class="mini_star fill"></span>
+                    <span class="mini_star fill"></span><span class="mini_star half"></span> <span
+                        class="mini_star"></span>
+                </div>
             </div>
 
             <div id="tab3" class="tab-content">
-
+            <div class="title-container w-100">
+                <div class="title-box">
+                    <div class="title-thumbnail"></div>
+                    <div class="title-text">
+                        <h5>제목/타이틀</h5>
+                        <p><img src="{{ url_for('static', filename='img/main_img/icon-star-full-v2.svg') }}"
+                                    alt="별">별점 • 장르 • 년도 • 방영시간 • 시즌</p>
+                    </div>
+                </div>
+                <div class="title-box"></div>
+                <div class="title-box"></div>
+                <div class="title-box"></div>
+                <div class="title-box"></div>
+                <div class="title-box"></div>
+                <div class="title-box"></div>
+                <div class="title-box"></div>
             </div>
         </div>
+        </div>
+
+        
     </div>
 </section>
 <br><br>
@@ -287,5 +334,210 @@
         setTimeout(() => { toast.className = ""; }, 3000);
     }
 
+    const stars = document.querySelectorAll('.comments .star');
+    let currentRating = 0;
+
+    stars.forEach((star) => {
+        // 1. 마우스를 올렸을 때 (Hover)
+        star.addEventListener('mouseenter', () => {
+            const hoverValue = star.getAttribute('data-value');
+            updateStarDisplay(hoverValue, 'hover');
+        });
+
+        // 2. 마우스가 나갔을 때 (Mouseleave)
+        star.addEventListener('mouseleave', () => {
+            // 호버 효과를 지우고, 클릭해서 고정된 점수(currentRating)로 복원
+            updateStarDisplay(currentRating, 'fill');
+        });
+
+        // 3. 클릭했을 때 (Click)
+        star.addEventListener('click', () => {
+            currentRating = star.getAttribute('data-value');
+            updateStarDisplay(currentRating, 'fill');
+            console.log(`선택한 평점: ${currentRating}점`);
+        });
+    });
+
+    function updateStarDisplay(targetValue, className) {
+        stars.forEach((s) => {
+            const starValue = s.getAttribute('data-value');
+
+            // 일단 모든 특수 클래스 제거
+            s.classList.remove('fill', 'hover');
+
+            // 목표 수치보다 작거나 같으면 클래스 추가
+            if (starValue <= targetValue) {
+                s.classList.add(className);
+            }
+        });
+    }
+
+    const star = document.querySelectorAll('.comments .star');
+    const container = document.querySelector('.comments');
+
+    let fixedRating = 0; // 클릭으로 고정된 점수
+
+    stars.forEach((star) => {
+        // 마우스 이동 시 (호버)
+        star.addEventListener('mousemove', (e) => {
+            // 클릭해서 고정된 상태면 호버 반응 중단
+
+            const rect = star.getBoundingClientRect();
+            const x = e.clientX - rect.left; // 별 영역 내 마우스 X 좌표
+            const value = parseFloat(star.getAttribute('data-value'));
+
+            // 0.5점 단위 계산: 별 폭의 절반보다 작으면 0.5점 차감
+            const isHalf = x < rect.width / 2;
+            const tempRating = isHalf ? value - 0.5 : value;
+
+            renderStars(tempRating);
+        });
+
+        // 클릭 시 (고정)
+        star.addEventListener('click', (e) => {
+            const rect = star.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const isHalf = x < rect.width / 2;
+            const value = parseFloat(star.getAttribute('data-value'));
+
+            fixedRating = isHalf ? value - 0.5 : value;
+            renderStars(fixedRating);
+            console.log("확정 점수:", fixedRating);
+        });
+    });
+
+    // 마우스가 영역을 벗어날 때
+    container.addEventListener('mouseleave', () => {
+        // 클릭된 게 없으면 초기화(0), 있으면 고정된 점수 유지
+        renderStars(fixedRating);
+    });
+
+    /**
+     * 별점 표시 핵심 함수
+     */
+    function renderStars(rating) {
+        stars.forEach((star) => {
+            const starValue = parseFloat(star.getAttribute('data-value'));
+
+            // 모든 상태 초기화
+            star.classList.remove('fill', 'half');
+
+            if (starValue <= rating) {
+                // 꽉 찬 별 (현재 별 값이 타겟 점수보다 작거나 같으면)
+                star.classList.add('fill');
+            } else if (starValue - 0.5 === rating) {
+                // 반쪽 별 (현재 별 값에서 0.5를 뺀 게 타겟 점수와 같으면)
+                star.classList.add('half');
+            }
+        });
+    }
+
+    // 1. 좋아요/싫어요 함수 (전역 유지)
+    window.handleLike = function (btn) {
+        const span = btn.querySelector('span');
+        span.innerText = parseInt(span.innerText) + 1;
+    };
+
+    window.handleDislike = function (btn) {
+        const span = btn.querySelector('span');
+        span.innerText = parseInt(span.innerText) + 1;
+    };
+
+    // [추가] 닉네임을 가져오는 함수
+    // 나중에 로그인 정보를 여기서 가져오도록 수정하면 됩니다.
+    function getNickname() {
+        // 예: return "{{ session['nickname'] }}"; // Flask 연동 시
+        return "방문자"; // 우선은 테스트용으로 고정값 반환
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const submitBtn = document.getElementById('submit-btn');
+        const commentInput = document.getElementById('comment-text');
+        const commentList = document.getElementById('comment-list');
+
+        loadComments();
+
+        if (!submitBtn || !commentInput || !commentList) {
+            console.error("HTML 요소를 찾을 수 없습니다. ID를 확인하세요.");
+            return;
+        }
+
+        // 별점 이미지 생성 함수
+        function createStarHtml(rating) {
+            let starHtml = '<div class="comment-star-wrap">';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) starHtml += '<span class="comment-star fill"></span>';
+                else if (i - 0.5 === rating) starHtml += '<span class="comment-star half"></span>';
+                else starHtml += '<span class="comment-star"></span>';
+            }
+            starHtml += `<span class="rating-num"></span></div>`;
+            return starHtml;
+        }
+
+        // 댓글을 화면에 추가하는 함수
+        function addCommentToDOM(data) {
+            const newItem = document.createElement('div');
+            newItem.className = 'comment-item';
+
+            newItem.innerHTML = `
+            <div class="comment-header">
+                <span class="comment-nickname">${data.nickname}</span>
+                <span class="comment-date">${data.date}</span>
+            </div>
+            <div class="comment-rating">${createStarHtml(data.rating)}</div>
+            <div class="comment-content">${data.content}</div>
+            <div class="comment-actions">
+                <button type="button" class="btn-action1" onclick="handleLike(this)"><img src="{{url_for('static', filename='img/main_img/icon-thumbs-up-v2.svg')}}" alt="thumb-up"> <span>0</span></button>
+                <button type="button" class="btn-action2" onclick="handleDislike(this)"><img src="{{url_for('static', filename='img/main_img/icon-thumbs-down-v2.svg')}}" alt="thumb-down"> </button>
+            </div>
+        `;
+            commentList.prepend(newItem);
+        }
+
+        // 로컬 스토리지 저장 및 로드 로직
+        function saveComment(data) {
+            const reviews = JSON.parse(localStorage.getItem('my_reviews')) || [];
+            reviews.push(data);
+            localStorage.setItem('my_reviews', JSON.stringify(reviews));
+        }
+
+        function loadComments() {
+            const reviews = JSON.parse(localStorage.getItem('my_reviews')) || [];
+            reviews.forEach(data => addCommentToDOM(data));
+        }
+
+        // 등록 버튼 클릭 이벤트
+        submitBtn.onclick = function () {
+            const text = commentInput.value.trim();
+
+            // [수정] 함수를 호출하여 현재 닉네임을 가져옴
+            const currentNickname = getNickname();
+
+            if (typeof fixedRating === 'undefined' || fixedRating === 0) {
+                alert("별점을 선택해주세요!"); return;
+            }
+
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+
+            const dateString = `${year}.${month}.${day}`;
+
+            const commentData = {
+                nickname: currentNickname, // 함수에서 가져온 값 사용
+                date: dateString,
+                rating: fixedRating,
+                content: text
+            };
+
+            addCommentToDOM(commentData);
+            saveComment(commentData);
+
+            commentInput.value = "";
+            fixedRating = 0;
+            if (typeof renderStars === 'function') renderStars(0);
+        };
+    });
 </script>
 {% endblock %}

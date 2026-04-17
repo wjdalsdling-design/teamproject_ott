@@ -1,6 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Luxurious+Roman&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Noto+Sans+KR:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bangers&family=Gabarito:wght@400..900&family=Luxurious+Roman&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Noto+Sans+KR:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bangers&family=Luxurious+Roman&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Noto+Sans+KR:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+*:focus, button:focus, input:focus, select:focus, textarea:focus {
+    outline: none !important;      
+    box-shadow: none !important;   
+    -webkit-tap-highlight-color: transparent !important; 
+}
+
+a:active, a:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
 
 html {
     height: 100%;
@@ -197,8 +206,8 @@ section {
     width: 35px;
     height: 24px;
     font-size: 14px;
-    font-family: "Merriweather", serif;
-    font-weight: 900;
+    font-family: "Gabarito", sans-serif;
+    font-weight: 700;
     font-style: normal;
     background-color: #3b4048;
     border-radius: 4px;
@@ -212,9 +221,8 @@ section {
     width: 30px;
     height: 24px;
     font-size: 13px;
-    font-family: "Merriweather", serif;
+    font-family: "Gabarito", sans-serif;
     font-weight: 600;
-    letter-spacing: 1px;
     background-color: #656b78;
     border-radius: 4px;
     display: flex;
@@ -244,7 +252,8 @@ section {
     background-color: #3b4048;
 }
 
-#toast, #toast1 {
+#toast,
+#toast1 {
     visibility: hidden;
     width: 13%;
     background-color: #333;
@@ -264,7 +273,7 @@ section {
 }
 
 
-#toast img{
+#toast img {
     width: 30px;
     height: 30px;
     margin-right: 10px;
@@ -275,10 +284,17 @@ section {
     margin: 0 5px 2px 0;
 }
 
-.wish-btn img { width: 24px; transition: transform 0.2s; }
-        .wish-btn:active img { transform: scale(0.8); }
+.wish-btn img {
+    width: 24px;
+    transition: transform 0.2s;
+}
 
-#toast.show, #toast1.show {
+.wish-btn:active img {
+    transform: scale(0.8);
+}
+
+#toast.show,
+#toast1.show {
     visibility: visible;
     animation: fadein 0.5s, fadeout 0.5s 2.5s;
 }
@@ -349,15 +365,41 @@ section {
 
 .tab {
     width: 95%;
-    height: 100%;
+    height: calc(100% - 60px); /* 헤더 영역 등을 제외한 나머지 높이 다 쓰기 */
     margin-top: 30px;
     margin-left: 33px;
+    display: flex;
+    flex-direction: column; /* 메뉴와 콘텐츠를 세로로 배치 */
 }
 
-.tab-content { display: none; }
+.tab-menu {
+    flex-shrink: 0; /* 높이가 줄어들지 않도록 고정 */
+    width: 100%;
+    background-color: #000;
+    border-bottom: 1px solid hsla(0, 0%, 100%, .1);
+}
 
-.tab-content.active { display: block ;}
+.tab-content {
+    max-height: 80%;
+    flex: 1;
+    overflow-y: auto; 
+    overflow-x: hidden;
+    box-sizing: border-box; 
+    display: none;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
 
+.tab-content::-webkit-scrollbar {
+    display: none;
+}
+
+.tab-content.active {
+    display: block ;
+    flex-grow: 1;      /* 남은 부모 높이를 가득 채움 */
+    height: 100%;      /* 부모(.tab) 대비 100% */
+    overflow-y: auto;  /* 내용이 넘치면 스크롤 생성 */
+}
 /* 마우스 올렸을 때와 활성화되었을 때 색상 */
 .tab-menu button:hover {
     background-color: #202022;
@@ -386,13 +428,6 @@ section {
     align-items: center;
 }
 
-/* 버튼 디자인 */
-.tab-menu {
-    width: 98%;
-    overflow: hidden;
-    background-color: #000;
-    border-bottom: 1px solid hsla(0, 0%, 100%, .1);
-}
 
 .tab-menu button {
     width: 33.33%;
@@ -407,7 +442,7 @@ section {
     font-size: 17px;
 }
 
-/* 에피소드 탭 */
+/* ---------------------------에피소드 탭------------------------- */
 /* 시즌, 순서 탭 */
 
 .container {
@@ -419,8 +454,6 @@ section {
     position: relative;
     width: 55%;
 }
-
-
 
 .tab-content .dropbtn {
     width: 100%;
@@ -456,17 +489,14 @@ section {
     background-color: #1c2024;
 }
 
-/* 1. 모든 탭 콘텐츠를 기본적으로 숨김 (이게 없어서 다 보였던 거예요) */
 .droptab-content {
     display: none !important;
 }
 
-/* 2. active 클래스가 붙은 것만 보여줌 */
 .droptab-content.active {
     display: block !important;
 }
 
-/* 드롭다운 안의 링크 스타일 */
 .dropdown-content button {
     color: #ffffffcc;
     border: none;
@@ -485,46 +515,269 @@ section {
     background-color: none;
 }
 
-/* ★ 자바스크립트로 이 클래스를 켜고 꺼서 메뉴를 보여줍니다 */
+
 .show {
     display: block;
 }
 
-/* 리뷰 탭 */
+/* -----------------리뷰 탭----------------*/
+
+
+/* 평점 */
 .review-box {
-    height: 100px;
+    height: 130px;
+    border-bottom: 2px solid hsla(0, 0%, 100%, .1);
 }
 
-.star {
+.review-box .star {
     display: inline-block;
-    width: 36px; height: 36px;
-    background-color: #555; /* 기본 회색 */
+    width: 36px;
+    height: 36px;
+    background-color: #555;
     -webkit-mask-image: url('../img/main_img/icon-star-full.svg');
     mask-image: url('../img/main_img/icon-star-full.svg');
     -webkit-mask-size: contain;
     mask-size: contain;
 }
 
-/* 꽉 찬 별 */
-.star.fill {
+.review-box .star.fill {
     background-color: #dab600;
 }
 
-/* 0.5점 별 (왼쪽은 노란색, 오른쪽은 회색) */
-.star.half {
+.review-box .star.half {
     background: linear-gradient(90deg, #dab600 50%, #555 50%);
 }
 
 .rating2 {
-    margin-right: 10px;
     font-size: 36px;
     font-family: "Archivo Black", sans-serif;
-  font-weight: 400;
-  font-style: normal;
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* 리뷰 작성 */
+.comments {
+    margin-top: 20px;
+}
+
+.comments .star {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    background-color: #555;
+    cursor: pointer;
+    -webkit-mask-image: url('../img/main_img/icon-star-full.svg');
+    mask-image: url('../img/main_img/icon-star-full.svg');
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    transition: none;
+    pointer-events: auto;
+}
+
+.comments .star.fill {
+    background-color: #dab600;
+}
+
+.comments .star.half {
+    background: linear-gradient(90deg, #dab600 50%, #555 50%);
+}
+
+.comments .star.hover-fill {
+    background-color: #dab600;
+}
+
+.comments .star.hover-half {
+    background: linear-gradient(90deg, #dab600 50%, #555 50%);
+}
+
+/* 댓글들 */
+
+.review-box2 {
+    margin-top: 20px;
+    height: 25px;
 }
 
 .review-box2 img {
-    margin: -3px 0 0 5px;
-    width: 32px;
+    transform: translate(0, 8px); /* 원래 자리에서 오른쪽 20px, 위로 50px 이동 */
+    width: 40px;
     filter: brightness(0) invert(0.8);
+}
+
+.comment-input-wrap {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    height: 200px;
+    margin-inline: auto;
+    border-bottom: 2px solid hsla(0, 0%, 100%, .1);
+}
+
+#comment-text {
+    height: 80px;
+    padding: 10px;
+    resize: none;
+    color: #ffffffcc;
+    border: 1px solid hsla(0, 0%, 100%, .1);
+    border-radius: 10px;
+    background-color: #1c2024;
+}
+
+#submit-btn {
+    padding: 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#submit-btn:hover {
+    transition: 0.3s;
+    filter: brightness(0.8);
+ }
+
+.comment-list {
+    width: 100%;
+    text-align: left;
+    margin-inline: auto;
+}
+
+/* 리뷰 아이템 전체 박스 */
+.comment-item {
+    border: 1px solid hsla(0, 0%, 100%, .1);
+    border-radius: 10px;
+    background-color: #1c2024;
+    padding: 15px;
+    margin-top: 10px;
+    text-align: left;
+}
+
+/* 닉네임과 날짜를 양옆으로 배치 */
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #777;
+}
+
+.comment-nickname {
+    font-weight: bold;
+    color: #fff;
+}
+
+/* 별점 표시 */
+.comment-rating {
+    margin: 5px 0;
+}
+
+/* 댓글 내 별점 컨테이너 (별들이 가로로 나열되게 함) */
+.comment-star-wrap {
+    display: flex !important;
+    align-items: center;
+    gap: 2px;
+    margin: 8px 0;
+}
+
+/* 개별 별 스타일 */
+.comment-star {
+    display: inline-block !important; /* 반드시 있어야 함 */
+    width: 20px; 
+    height: 20px;
+    background-color: #555; /* 기본 회색 (빈 별) */
+    -webkit-mask-image: url('../img/main_img/icon-star-full.svg');
+    mask-image: url('../img/main_img/icon-star-full.svg');
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+}
+
+/* 색상 강제 적용 */
+.comment-star.fill {
+    background-color: #dab600 !important;
+}
+
+.comment-star.half {
+    background: linear-gradient(90deg, #dab600 50%, #555 50%) !important;
+}
+
+.rating-num {
+    color: #dab600;
+    transform: translate(5px, 1px);
+}
+
+/* 리뷰 텍스트 내용 */
+.comment-content {
+    margin: 10px 0;
+    line-height: 1.4;
+    word-break: break-all; /* 긴 문장 방지 */
+}
+
+/* 좋아요/싫어요 버튼 컨테이너 */
+.comment-actions {
+    display: flex;
+    gap: 15px;
+}
+
+/* 공통 버튼 스타일 */
+.btn-action1 {
+    min-width: 50px;
+    font-family: "Gabarito", sans-serif;
+    cursor: pointer;
+    background: none;
+    border: none;
+    border-radius: 10px;
+    background-color: #333b42;
+    padding: 4px 8px;
+    color: #fff;
+}
+
+.btn-action2 {
+    cursor: pointer;
+    background: none;
+    border: none;
+    border-radius: 10px;
+    background-color: #333b42;
+    padding: 4px 8px;
+    color: #fff;
+}
+
+.btn-action:hover {
+}
+
+#tab3 .title-container {
+    height: auto;
+    background-color: tomato;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+#tab3 .title-box {
+    width: 47%;
+    height: 275px;
+    margin-top: 24px;
+    background-color: yellowgreen;
+}
+
+#tab3 .title-thumbnail {
+    width: 100%;
+    height: 55%;
+    background-color: purple;
+    border-radius: 12px;
+}
+
+#tab3 h5 {
+    font-size: 18px;
+}
+
+#tab3 p {
+    font-size: 16px;
+}
+
+#tab3 p img {
+    width: 16px;
 }
