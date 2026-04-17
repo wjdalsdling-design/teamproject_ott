@@ -15,6 +15,40 @@ body {
     min-height: 100vh;
 }
 
+/* ================= 대시보드 숫자 카드 ================= */
+
+.dashboard_cards {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0 30px;
+}
+
+.dashboard_card {
+    flex: 1;
+    background-color: #111;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #aaa;
+}
+
+.dashboard_card p {
+    color: white;
+    margin-bottom: 8px;
+    font-size: 17px;
+}
+
+.dashboard_card h2 {
+    font-size: 30px;
+    color: white;
+}
+
+
+.dashboard_card.highlight h2 {
+    color: red;
+}
+
 /* ================= 사이드바 ================= */
 .admin_sidebar {
     width: 200px;
@@ -125,7 +159,7 @@ body {
 
 .admin_table th:nth-child(1),
 .admin_table td:nth-child(1) {
-    width: 8px;
+    width: 5%;
 }
 
 .admin_table td {
@@ -421,4 +455,163 @@ body {
 input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
     cursor: pointer;
+}
+
+/* ================= 문의 관리 전용 ================= */
+
+.inquiry_table {
+    table-layout: fixed;
+}
+
+.inquiry_table th:nth-child(1),
+.inquiry_table td:nth-child(1) {
+    width: 5%;
+}
+
+.inquiry_table th:nth-child(2),
+.inquiry_table td:nth-child(2) {
+    width: 25%;
+}
+
+.inquiry_table th:nth-child(3),
+.inquiry_table td:nth-child(3) {
+    width: 10%;
+}
+
+.inquiry_table th:nth-child(4),
+.inquiry_table td:nth-child(4) {
+    width: 30%;
+}
+
+.inquiry_table th:nth-child(5),
+.inquiry_table td:nth-child(5) {
+    width: 10%;
+}
+
+.inquiry_table th:nth-child(6),
+.inquiry_table td:nth-child(6) {
+    width: 10%;
+}
+
+.inquiry_table th:nth-child(7),
+.inquiry_table td:nth-child(7) {
+    width: 10%;
+}
+
+.inquiry_content_cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.answer_box {
+    border: 1px solid #333;
+    background-color: #222;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 12px;
+}
+
+.answer_actions {
+    margin-top: 14px;
+}
+
+.status_pending {
+    color: orange;
+    font-weight: bold;
+}
+
+.status_completed {
+    color: #4caf50;
+    font-weight: bold;
+}
+
+/* ================= 리뷰 관리 전용 ================= */
+
+.review_table {
+    table-layout: fixed;
+}
+
+.review_table th:nth-child(1),
+.inquiry_table td:nth-child(1) {
+    width: 5%;
+}
+
+.review_table th:nth-child(2),
+.review_table td:nth-child(2) {
+    width: 25%;
+}
+
+.review_table th:nth-child(3),
+.review_table td:nth-child(3) {
+    width: 220px;
+}
+
+.review_table th:nth-child(4),
+.review_table td:nth-child(4) {
+    width: 5%;
+}
+
+.review_table th:nth-child(5),
+.review_table td:nth-child(5) {
+    width: 8%;
+}
+
+.review_table th:nth-child(6),
+.review_table td:nth-child(6) {
+    width: 300px;
+}
+
+.review_table th:nth-child(7),
+.review_table td:nth-child(7) {
+    width: 130px;
+}
+
+.review_table th:nth-child(8),
+.review_table td:nth-child(8) {
+    width: 110px;
+}
+
+.review_comment_cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ================= 페이지네이션 ================= */
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 25px;
+}
+
+.pagination a,
+.pagination span {
+    display: inline-block;
+    min-width: 36px;
+    padding: 8px 12px;
+    text-align: center;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.pagination a {
+    background-color: #222;
+    color: white;
+    border: 1px solid #333;
+}
+
+.pagination a:hover {
+    background-color: #333;
+}
+
+.pagination .current {
+    background-color: red;
+    color: white;
+    border: 1px solid red;
 }

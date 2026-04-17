@@ -25,36 +25,91 @@
     <main class="admin_content">
         <h1>리뷰 관리</h1>
 
-        <table class="admin_table">
+        <form method="get" action="{{ url_for('admin.review_list') }}" class="search_form">
+            <select name="search_type">
+                <option value="all" {% if search_type==
+                'all' %}selected{% endif %}>전체</option>
+                <option value="review_id" {% if search_type==
+                'review_id' %}selected{% endif %}>번호</option>
+                <option value="user_email" {% if search_type==
+                'user_email' %}selected{% endif %}>이메일</option>
+                <option value="video_title" {% if search_type==
+                'video_title' %}selected{% endif %}>콘텐츠 제목</option>
+                <option value="comment" {% if search_type==
+                'comment' %}selected{% endif %}>리뷰 내용</option>
+            </select>
+
+            <input type="text" name="keyword" value="{{ keyword }}" placeholder="검색어 입력">
+            <button type="submit" class="search_btn">검색</button>
+            <a href="{{ url_for('admin.review_list') }}" class="reset_btn">전체보기</a>
+        </form>
+
+        <table class="admin_table review_table">
             <thead>
-                <tr>
-                    <th>번호</th>
-                    <th>회원번호</th>
-                    <th>콘텐츠번호</th>
-                    <th>별점</th>
-                    <th>스포일러</th>
-                    <th>리뷰 내용</th>
-                    <th>작성일</th>
-                </tr>
+            <tr>
+                <th>번호</th>
+                <th>이메일</th>
+                <th>콘텐츠 제목</th>
+                <th>별점</th>
+                <th>스포일러</th>
+                <th>리뷰 내용</th>
+                <th>작성일</th>
+                <th>관리</th>
+            </tr>
             </thead>
             <tbody>
-                {% for review in review_list %}
-                <tr>
-                    <td>{{ review.review_id }}</td>
-                    <td>{{ review.user_unique_id }}</td>
-                    <td>{{ review.video_unique_id }}</td>
-                    <td>{{ review.rating }}</td>
-                    <td>{{ 'O' if review.is_spoiler else 'X' }}</td>
-                    <td>{{ review.comment }}</td>
-                    <td>{{ review.create_at }}</td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="7">리뷰가 없습니다.</td>
-                </tr>
-                {% endfor %}
+            {% for review in review_list.items %}
+            <tr>
+                <td>{{ review.review_id }}</td>
+                <td>{{ review.user.user_email if review.user and review.user.user_email else '-' }}</td>
+                <td>{{ review.video.video_title if review.video and review.video.video_title else '-' }}</td>
+                <td>{{ review.rating if review.rating is not none else '-' }}</td>
+                <td>
+                    {% if review.is_spoiler == True %}
+                    O
+                    {% elif review.is_spoiler == False %}
+                    X
+                    {% else %}
+                    -
+                    {% endif %}
+                </td>
+                <td class="review_comment_cell">{{ review.comment if review.comment else '-' }}</td>
+                <td>{{ review.create_at.strftime('%Y-%m-%d') if review.create_at else '-' }}</td>
+                <td>
+                    <form action="{{ url_for('admin.review_delete', review_id=review.review_id) }}"
+                          method="post"
+                          onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                        <button type="submit" class="btn delete_btn">삭제</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="8">리뷰가 없습니다.</td>
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
+        <div class="pagination">
+            {% if review_list.has_prev %}
+            <a href="{{ url_for('admin.review_list', page=review_list.prev_num, keyword=keyword, search_type=search_type) }}">이전</a>
+            {% endif %}
+
+            {% for page_num in review_list.iter_pages() %}
+            {% if page_num %}
+            {% if page_num == review_list.page %}
+            <span class="current">{{ page_num }}</span>
+            {% else %}
+            <a href="{{ url_for('admin.review_list', page=page_num, keyword=keyword, search_type=search_type) }}">{{
+                page_num }}</a>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+
+            {% if review_list.has_next %}
+            <a href="{{ url_for('admin.review_list', page=review_list.next_num, keyword=keyword, search_type=search_type) }}">다음</a>
+            {% endif %}
+        </div>
     </main>
 
 </div>

@@ -27,6 +27,31 @@
     <main class="admin_content">
         <h1>관리자 대시보드</h1>
 
+        <div class="dashboard_cards">
+
+            <div class="dashboard_card">
+                <p>전체 회원 수</p>
+                <h2>{{ user_count }}</h2>
+            </div>
+
+            <div class="dashboard_card">
+                <p>전체 콘텐츠 수</p>
+                <h2>{{ content_count }}</h2>
+            </div>
+
+            <div class="dashboard_card highlight"
+                 onclick="location.href='{{ url_for('admin.inquiry_list') }}'"
+                 style="cursor:pointer;">
+                <p>답변 전 문의 수</p>
+                <h2>{{ inquiry_pending_count }}</h2>
+            </div>
+
+            <div class="dashboard_card">
+                <p>전체 리뷰 수</p>
+                <h2>{{ review_count }}</h2>
+            </div>
+
+        </div>
         <div class="admin_cards">
             <div class="card">
                 <h3>회원 관리</h3>

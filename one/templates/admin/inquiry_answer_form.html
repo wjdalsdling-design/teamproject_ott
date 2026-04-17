@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>답변 수정</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+
+<div class="admin_wrap">
+
+    <aside class="admin_sidebar">
+        <h2>
+            <a href="{{ url_for('admin.admin_main') }}" class="admin_title">관리자</a>
+        </h2>
+        <ul>
+            <li><a href="{{ url_for('admin.member_list') }}">회원 관리</a></li>
+            <li><a href="{{ url_for('admin.content_list') }}">콘텐츠 관리</a></li>
+            <li><a href="{{ url_for('admin.inquiry_list') }}" class="active">문의 관리</a></li>
+            <li><a href="{{ url_for('admin.review_list') }}">리뷰 관리</a></li>
+        </ul>
+    </aside>
+
+    <main class="admin_content">
+        <h1>답변 수정</h1>
+
+        <form method="post" class="content_form">
+            <div class="content_form_group">
+                <label>답변 내용</label>
+                <textarea name="answer_content" required>{{ answer.content if answer.content else '' }}</textarea>
+            </div>
+
+            <div class="content_form_actions">
+                <button type="submit" class="content_save_btn">수정 완료</button>
+                <a href="{{ url_for('admin.inquiry_detail', support_id=answer.support_id) }}"
+                   class="content_cancel_btn">취소</a>
+            </div>
+        </form>
+    </main>
+
+</div>
+
+</body>
+</html>

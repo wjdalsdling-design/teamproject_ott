@@ -72,7 +72,7 @@
             </tr>
             </thead>
             <tbody>
-            {% for content in content_list %}
+            {% for content in content_list.items %}
             <tr>
                 <td>{{ content.video_unique_id }}</td>
                 <td>{{ content.video_title }}</td>
@@ -99,6 +99,26 @@
             {% endfor %}
             </tbody>
         </table>
+        <div class="pagination">
+            {% if content_list.has_prev %}
+            <a href="{{ url_for('admin.content_list', page=content_list.prev_num, keyword=keyword, search_type=search_type) }}">이전</a>
+            {% endif %}
+
+            {% for page_num in content_list.iter_pages() %}
+            {% if page_num %}
+            {% if page_num == content_list.page %}
+            <span class="current">{{ page_num }}</span>
+            {% else %}
+            <a href="{{ url_for('admin.content_list', page=page_num, keyword=keyword, search_type=search_type) }}">{{
+                page_num }}</a>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+
+            {% if content_list.has_next %}
+            <a href="{{ url_for('admin.content_list', page=content_list.next_num, keyword=keyword, search_type=search_type) }}">다음</a>
+            {% endif %}
+        </div>
     </main>
 
 </div>

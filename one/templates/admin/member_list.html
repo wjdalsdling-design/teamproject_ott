@@ -31,8 +31,6 @@
                 'all' %}selected{% endif %}>전체</option>
                 <option value="user_unique_id" {% if search_type==
                 'user_unique_id' %}selected{% endif %}>번호</option>
-                <option value="user_name" {% if search_type==
-                'user_name' %}selected{% endif %}>이름</option>
                 <option value="user_email" {% if search_type==
                 'user_email' %}selected{% endif %}>이메일</option>
                 <option value="user_phone" {% if search_type==
@@ -54,7 +52,6 @@
             <thead>
             <tr>
                 <th>번호</th>
-                <th>이름</th>
                 <th>이메일</th>
                 <th>전화번호</th>
                 <th>성별</th>
@@ -64,10 +61,9 @@
             </tr>
             </thead>
             <tbody>
-            {% for member in member_list %}
+            {% for member in member_list.items %}
             <tr>
                 <td>{{ member.user_unique_id }}</td>
-                <td>{{ member.user_name or '-' }}</td>
                 <td>{{ member.user_email or '-' }}</td>
                 <td>{{ member.user_phone or '-' }}</td>
                 <td>{{ member.user_gender or '-' }}</td>
@@ -106,6 +102,26 @@
             {% endfor %}
             </tbody>
         </table>
+        <div class="pagination">
+            {% if member_list.has_prev %}
+            <a href="{{ url_for('admin.member_list', page=member_list.prev_num, keyword=keyword, search_type=search_type) }}">이전</a>
+            {% endif %}
+
+            {% for page_num in member_list.iter_pages() %}
+            {% if page_num %}
+            {% if page_num == member_list.page %}
+            <span class="current">{{ page_num }}</span>
+            {% else %}
+            <a href="{{ url_for('admin.member_list', page=page_num, keyword=keyword, search_type=search_type) }}">{{
+                page_num }}</a>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+
+            {% if member_list.has_next %}
+            <a href="{{ url_for('admin.member_list', page=member_list.next_num, keyword=keyword, search_type=search_type) }}">다음</a>
+            {% endif %}
+        </div>
     </main>
 
 </div>
