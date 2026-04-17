@@ -77,7 +77,7 @@ class UserCreateForm(FlaskForm):
     def validate_email(self, field):
         user = User.query.filter_by(user_email=field.data).first()
         if user:
-            raise ValidationError("이미 가입된 이메일입니다.")
+            raise ValidationError("이미 사용 중인 이메일입니다.")
 
     # 나이 제한 체크 (14세)
     def validate_birth_year(self, field):

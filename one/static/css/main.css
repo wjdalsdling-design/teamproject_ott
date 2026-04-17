@@ -419,3 +419,69 @@ h3 {
     height: 36px;
     filter: invert(30%);
 }
+
+
+.swal2-container * {
+    outline: none !important;
+}
+
+.netflixst-toast {
+    border: none !important;
+    outline: none !important;
+}
+
+.netflixst-toast {
+    border-radius: 10px !important;
+    padding: 14px 18px 14px 16px !important;
+
+    background: #2a2a2a !important;   /* ✅ 불투명 */
+    color: #f1f1f1 !important;
+
+    font-size: 14px;
+
+    position: relative;
+    overflow: hidden;
+}
+
+/* 🔴 왼쪽 빨간 라인 (핵심) */
+.netflixst-toast::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: #e50914;
+}
+
+/* 🔥 등장 애니메이션 (위에서 내려옴) */
+.animate-toast-in {
+    animation: toastSlideDown 0.35s ease forwards;
+}
+
+/* 🔥 사라질 때 */
+.animate-toast-out {
+    animation: toastFadeOut 0.2s ease forwards;
+}
+
+/* 등장 */
+@keyframes toastSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 사라짐 */
+@keyframes toastFadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}

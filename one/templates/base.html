@@ -22,7 +22,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <a class="navbar-brand text-white" href="{{ url_for('home.index')}}"><img class="logo"
-                                                                                      src="{{ url_for('static', filename='img/test_logo.png') }}"
+                                                                                      src="{{ url_for('static', filename='img/logo.png') }}"
                                                                                       alt=""></a>
             <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -37,9 +37,6 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="#">애니</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#">몰?루</a>
                     </li>
                 </ul>
                 <div class="d-flex align-items-center">
@@ -122,6 +119,49 @@
         crossorigin="anonymous"></script>
 {% block script %}
 {% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const logoutBtn = document.querySelector('.action-btn.primary');
+
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: '로그아웃 하시겠습니까?',
+                    text: '현재 계정에서 로그아웃됩니다.',
+                    icon: null,
+                    width: '360px',
+                    background: '#343a40',
+                    color: '#fff',
+
+                    showCancelButton: true,
+                    confirmButtonColor: '#ff4d4f',
+                    cancelButtonColor: '#6c757d',
+
+                    confirmButtonText: '로그아웃',
+                    cancelButtonText: '취소',
+
+                    customClass: {
+                    popup: 'swal-popup-custom',
+                    confirmButton: 'swal-confirm-btn',
+                    cancelButton: 'swal-cancel-btn'
+                    },
+                    buttonsStyling: false
+
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = this.href;
+                    }
+                });
+            });
+        }
+    });
+</script>
+
 </body>
 
 </html>

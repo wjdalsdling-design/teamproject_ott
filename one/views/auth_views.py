@@ -140,7 +140,7 @@ def kakao_callback():
     db.session.commit()
 
     if not user.user_active:
-        flash("이 계정은 이용이 제한되었습니다.")
+        flash("현재 이용할 수 없는 계정입니다.", "error")
         return redirect(url_for('auth.login'))
 
     session['user'] = user.user_unique_id
@@ -187,7 +187,7 @@ def signup():
             db.session.add(user)
             db.session.commit()
 
-            flash("회원가입 완료!")
+            flash("회원가입 완료!", "success")
             return redirect(url_for('auth.login'))
 
         except Exception as e:
@@ -212,14 +212,14 @@ def login():
         if user and check_password_hash(user.user_password, password):
 
             if not user.user_active:
-                flash("이 계정은 이용이 제한되었습니다.")
+                flash("이 계정은 이용이 제한되었습니다.", "error")
                 return redirect(url_for('auth.login'))
 
             session['user'] = user.user_unique_id
-            flash("로그인 성공!")
+            flash("로그인 완료", "success")
             return redirect(url_for('home.main'))
         else:
-            flash("이메일 또는 비밀번호가 틀렸습니다.")
+            flash("이메일 또는 비밀번호를 다시 확인해주세요.", "error")
 
     return render_template('auth/login.html', form=form)
 
@@ -235,7 +235,7 @@ def logout():
         )
 
     session.clear()
-    flash("로그아웃 되었습니다.")
+    flash("로그아웃되었습니다.", "success")
     return redirect(url_for('home.index'))
 
 
